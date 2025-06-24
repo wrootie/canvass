@@ -2,23 +2,28 @@
 import { useState, useEffect } from 'react';
 import { CanvassingRecord } from '../types';
 import { useAuth } from '../contexts/AuthContext';
+import { api } from '@/utils/wrappers';
 
 export const useCanvassingRecords = () => {
   const { user } = useAuth();
   const [records, setRecords] = useState<CanvassingRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const loadRecords = () => {
+  const loadRecords = async() => {
     if (!user) {
       setRecords([]);
       setIsLoading(false);
       return;
     }
-    // TODO: Replace with actual API calls!
     try {
-      const allRecords = JSON.parse(localStorage.getItem('canvassing_records') || '[]');
-      const userRecords = allRecords.filter((record: CanvassingRecord) => record.userId === user.id);
-      setRecords(userRecords);
+      const response = await api(`/records`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('canvassing_token')}`
+        }
+      });
+      setRecords(response.records);
     } catch (error) {
       console.error('Error loading records:', error);
       setRecords([]);
@@ -30,24 +35,29 @@ export const useCanvassingRecords = () => {
     loadRecords();
   }, [user]);
 
-  const addRecord = (name: string, email: string, notes: string): boolean => {
+  const addRecord = async(firstName: string, lastName: string, email: string, notes: string): Promise<boolean> => {
     if (!user) return false;
 
     try {
+      // Will throw an error if the record is not created
+      await api(`/records`, {
+        method: 'POST',
+        body: JSON.stringify({ firstName, lastName, email, notes }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('canvassing_token')}`
+        }
+      });
       const newRecord: CanvassingRecord = {
         id: Date.now().toString(),
-        name,
+        firstName,
+        lastName,
         email,
         notes,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         userId: user.id
       };
-
-      const allRecords = JSON.parse(localStorage.getItem('canvassing_records') || '[]');
-      allRecords.push(newRecord);
-      localStorage.setItem('canvassing_records', JSON.stringify(allRecords));
-      
       setRecords(prev => [...prev, newRecord]);
       return true;
     } catch (error) {
@@ -56,24 +66,19 @@ export const useCanvassingRecords = () => {
     }
   };
 
-  const updateRecord = (id: string, name: string, email: string, notes: string): boolean => {
+  const updateRecord = async(id: string, firstName: string, lastName: string, email: string, notes: string): Promise<boolean> => {
     if (!user) return false;
 
     try {
-      const allRecords = JSON.parse(localStorage.getItem('canvassing_records') || '[]');
-      const recordIndex = allRecords.findIndex((r: CanvassingRecord) => r.id === id && r.userId === user.id);
-      
-      if (recordIndex === -1) return false;
-
-      allRecords[recordIndex] = {
-        ...allRecords[recordIndex],
-        name,
-        email,
-        notes,
-        updatedAt: new Date().toISOString()
-      };
-
-      localStorage.setItem('canvassing_records', JSON.stringify(allRecords));
+      // Will throw an error if the record is not found
+      await api(`/records/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ firstName, lastName, email, notes }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('canvassing_token')}`
+        }
+      });
       loadRecords();
       return true;
     } catch (error) {
@@ -82,14 +87,18 @@ export const useCanvassingRecords = () => {
     }
   };
 
-  const deleteRecord = (id: string): boolean => {
+  const deleteRecord = async(id: string): Promise<boolean> => {
     if (!user) return false;
 
     try {
-      const allRecords = JSON.parse(localStorage.getItem('canvassing_records') || '[]');
-      const filteredRecords = allRecords.filter((r: CanvassingRecord) => !(r.id === id && r.userId === user.id));
-      
-      localStorage.setItem('canvassing_records', JSON.stringify(filteredRecords));
+      // Will throw an error if the record is not found
+      await api(`/records/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('canvassing_token')}`
+        }
+      });
       setRecords(prev => prev.filter(r => r.id !== id));
       return true;
     } catch (error) {

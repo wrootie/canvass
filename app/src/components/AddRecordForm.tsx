@@ -9,12 +9,14 @@ import { useCanvassingRecords } from '../hooks/useCanvassingRecords';
 import { validateEmail, validateName } from '../utils/validation';
 import { useToast } from '@/hooks/use-toast';
 import { Save, UserPlus } from 'lucide-react';
+import { Form } from 'react-router-dom';
 
 interface AddRecordFormProps {
   editingRecord?: {
     id: string;
-    name: string;
-    email: string;
+    firstName: string;
+    lastName: string;
+    email?: string;
     notes: string;
   };
   onSuccess?: () => void;
@@ -24,12 +26,14 @@ export const AddRecordForm: React.FC<AddRecordFormProps> = ({ editingRecord, onS
   const { addRecord, updateRecord } = useCanvassingRecords();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     notes: ''
   });
   const [errors, setErrors] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     notes: ''
   });
@@ -38,7 +42,8 @@ export const AddRecordForm: React.FC<AddRecordFormProps> = ({ editingRecord, onS
   useEffect(() => {
     if (editingRecord) {
       setFormData({
-        name: editingRecord.name,
+        firstName: editingRecord.firstName,
+        lastName: editingRecord.lastName,
         email: editingRecord.email,
         notes: editingRecord.notes
       });
@@ -46,11 +51,16 @@ export const AddRecordForm: React.FC<AddRecordFormProps> = ({ editingRecord, onS
   }, [editingRecord]);
 
   const validateForm = () => {
-    const newErrors = { name: '', email: '', notes: '' };
+    const newErrors = { firstName: '', lastName: '', email: '', notes: '' };
     let isValid = true;
 
-    if (!validateName(formData.name)) {
-      newErrors.name = 'Name must be at least 2 characters long';
+    if (!validateName(formData.firstName)) {
+      newErrors.firstName = 'First name must be at least 2 characters long';
+      isValid = false;
+    }
+
+    if (!validateName(formData.lastName)) {
+      newErrors.lastName = 'Last name must be at least 2 characters long';
       isValid = false;
     }
 
@@ -75,15 +85,15 @@ export const AddRecordForm: React.FC<AddRecordFormProps> = ({ editingRecord, onS
     
     setIsSubmitting(true);
     console.log('Submitting form:', { editingRecord: !!editingRecord, formData });
-
+    console.log({ formData })
     try {
       let success = false;
       
       if (editingRecord) {
-        success = updateRecord(editingRecord.id, formData.name, formData.email, formData.notes);
+        success = await updateRecord(editingRecord.id, formData.firstName, formData.lastName, formData.email, formData.notes);
         console.log('Update result:', success);
       } else {
-        success = addRecord(formData.name, formData.email, formData.notes);
+        success = await addRecord(formData.firstName, formData.lastName, formData.email, formData.notes);
         console.log('Add result:', success);
       }
 
@@ -94,7 +104,7 @@ export const AddRecordForm: React.FC<AddRecordFormProps> = ({ editingRecord, onS
         });
         
         if (!editingRecord) {
-          setFormData({ name: '', email: '', notes: '' });
+          setFormData({ firstName: '', lastName: '', email: '', notes: '' });
         }
         onSuccess?.();
       } else {
@@ -139,16 +149,29 @@ export const AddRecordForm: React.FC<AddRecordFormProps> = ({ editingRecord, onS
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name *</Label>
+              <Label htmlFor="firstName">First Name *</Label>
               <Input
-                id="name"
+                id="firstName"
                 type="text"
-                placeholder="Enter person's name"
-                value={formData.name}
-                onChange={(e) => handleInputChange('name', e.target.value)}
-                className={errors.name ? 'border-red-500' : ''}
+                placeholder="Enter person's first name"
+                value={formData.firstName}
+                onChange={(e) => handleInputChange('firstName', e.target.value)}
+                className={errors.firstName ? 'border-red-500' : ''}
               />
-              {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
+              {errors.firstName && <p className="text-sm text-red-500">{errors.firstName}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="lastName">Last Name *</Label>
+              <Input
+                id="lastName"
+                type="text"
+                placeholder="Enter person's last name"
+                value={formData.lastName}
+                onChange={(e) => handleInputChange('lastName', e.target.value)}
+                className={errors.lastName ? 'border-red-500' : ''}
+              />
+              {errors.lastName && <p className="text-sm text-red-500">{errors.lastName}</p>}
             </div>
             
             <div className="space-y-2">

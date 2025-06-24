@@ -1,8 +1,9 @@
 
 export interface CanvassingRecord {
   id: string;
-  name: string;
-  email: string;
+  firstName: string;
+  lastName: string;
+  email?: string;
   notes: string;
   createdAt: string;
   updatedAt: string;
@@ -12,7 +13,9 @@ export interface CanvassingRecord {
 export interface User {
   id: string;
   email: string;
-  name: string;
+  firstName: string;
+  lastName: string;
+  password?: string;
 }
 
 export interface AuthState {

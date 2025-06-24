@@ -22,7 +22,8 @@ export const RecordsList: React.FC = () => {
     
     const term = searchTerm.toLowerCase();
     return records.filter(record =>
-      record.name.toLowerCase().includes(term) ||
+      record.firstName.toLowerCase().includes(term) ||
+      record.lastName.toLowerCase().includes(term) ||
       record.email.toLowerCase().includes(term) ||
       record.notes.toLowerCase().includes(term)
     );
@@ -143,7 +144,7 @@ export const RecordsList: React.FC = () => {
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div>
-                    <CardTitle className="text-lg">{record.name}</CardTitle>
+                    <CardTitle className="text-lg">{(record.firstName || '') + ' ' + (record.lastName || '')}</CardTitle>
                     <CardDescription className="flex items-center gap-4 mt-1">
                       <span className="flex items-center gap-1">
                         <Mail className="h-3 w-3" />
@@ -166,7 +167,7 @@ export const RecordsList: React.FC = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleDelete(record.id, record.name)}
+                      onClick={() => handleDelete(record.id, (record.firstName || '') + ' ' + (record.lastName || ''))}
                       className="text-red-600 hover:text-red-700"
                     >
                       <Trash2 className="h-4 w-4" />

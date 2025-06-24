@@ -1,15 +1,17 @@
 
 import { CanvassingRecord } from '../types';
 
+// TODO: Test this
 export const exportToCSV = (records: CanvassingRecord[], filename: string = 'canvassing-records.csv') => {
-  const headers = ['Name', 'Email', 'Notes', 'Created Date', 'Last Updated'];
+  const headers = ['First Name', 'Last Name', 'Email', 'Notes', 'Created Date', 'Last Updated'];
   
   const csvContent = [
     headers.join(','),
     ...records.map(record => [
-      `"${record.name.replace(/"/g, '""')}"`,
-      `"${record.email.replace(/"/g, '""')}"`,
-      `"${record.notes.replace(/"/g, '""')}"`,
+      `"${record.firstName}"`,
+      `"${record.lastName}"`,
+      `"${record.email}"`,
+      `"${record.notes}"`,
       `"${new Date(record.createdAt).toLocaleDateString()}"`,
       `"${new Date(record.updatedAt).toLocaleDateString()}"`
     ].join(','))

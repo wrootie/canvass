@@ -52,7 +52,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2 text-sm text-gray-600">
                 <User className="h-4 w-4" />
-                <span className="hidden sm:inline">{user?.name}</span>
+                <span className="hidden sm:inline">{user?.firstName || ''} {user?.lastName || ''}</span>
               </div>
               <Button variant="outline" size="sm" onClick={handleLogout}>
                 <LogOut className="h-4 w-4 mr-2" />

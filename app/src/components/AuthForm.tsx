@@ -13,22 +13,29 @@ export const AuthForm: React.FC = () => {
   const { toast } = useToast();
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: ''
   });
   const [errors, setErrors] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: ''
   });
 
   const validateForm = () => {
-    const newErrors = { name: '', email: '', password: '' };
+    const newErrors = { firstName: '', lastName: '', email: '', password: '' };
     let isValid = true;
 
-    if (!isLoginMode && !validateName(formData.name)) {
-      newErrors.name = 'Name must be at least 2 characters long';
+    if (!isLoginMode && !validateName(formData.firstName)) {
+      newErrors.firstName = 'First name must be at least 2 characters long';
+      isValid = false;
+    }
+
+    if (!isLoginMode && !validateName(formData.lastName)) {
+      newErrors.lastName = 'Last name must be at least 2 characters long';
       isValid = false;
     }
 
@@ -52,11 +59,9 @@ export const AuthForm: React.FC = () => {
     if (!validateForm()) return;
 
     try {
-      let success = false;
-      
       if (isLoginMode) {
-        success = await login(formData.email, formData.password);
-        if (!success) {
+        const result = await login(formData.email, formData.password);
+        if (result !== true) {
           toast({
             title: "Login Failed",
             description: "Invalid email or password",
@@ -64,8 +69,8 @@ export const AuthForm: React.FC = () => {
           });
         }
       } else {
-        success = await register(formData.name, formData.email, formData.password);
-        if (!success) {
+        const result = await register(formData.firstName, formData.lastName, formData.email, formData.password);
+        if (result !== true) {
           toast({
             title: "Registration Failed",
             description: "An account with this email already exists",
@@ -109,12 +114,26 @@ export const AuthForm: React.FC = () => {
                 <Input
                   id="name"
                   type="text"
-                  placeholder="Enter your full name"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
-                  className={errors.name ? 'border-red-500' : ''}
+                  placeholder="Enter your first name"
+                  value={formData.firstName}
+                  onChange={(e) => handleInputChange('firstName', e.target.value)}
+                  className={errors.firstName ? 'border-red-500' : ''}
                 />
-                {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
+                {errors.firstName && <p className="text-sm text-red-500">{errors.firstName}</p>}
+              </div>
+            )}
+            {!isLoginMode && (
+              <div className="space-y-2">
+                <Label htmlFor="name">Last Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Enter your last name"
+                  value={formData.lastName}
+                  onChange={(e) => handleInputChange('lastName', e.target.value)}
+                  className={errors.lastName ? 'border-red-500' : ''}
+                />
+                {errors.lastName && <p className="text-sm text-red-500">{errors.lastName}</p>}
               </div>
             )}
             

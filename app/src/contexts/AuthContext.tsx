@@ -1,10 +1,10 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, AuthState } from '../types';
-
+import { api } from '../utils/wrappers'
 interface AuthContextType extends AuthState {
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (name: string, email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<true | string>;
+  register: (firstName: string, lastName: string, email: string, password: string) => Promise<true | string>;
   logout: () => void;
 }
 
@@ -23,74 +23,63 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Replace with actual API calls!
     // Check for existing session on app load
-    const savedUser = localStorage.getItem('canvassing_user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
+    const savedToken = localStorage.getItem('canvassing_token');
+    if (savedToken) {
+      setUser(JSON.parse(savedToken));
     }
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<true | string> => {
     setIsLoading(true);
     try {
-      // Simulate API call // TODO: Replace with actual API calls!
-      const users = JSON.parse(localStorage.getItem('canvassing_users') || '[]');
-      const user = users.find((u: any) => u.email === email && u.password === password);
-      
-      if (user) {
-        const { password: _, ...userWithoutPassword } = user;
-        setUser(userWithoutPassword);
-        localStorage.setItem('canvassing_user', JSON.stringify(userWithoutPassword));
-        setIsLoading(false);
-        return true;
-      }
+      // Try to login. Api wrapper will throw on error
+      const response = await api(`/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const { user } = response;
+      setUser(user);
+      localStorage.setItem('canvassing_token', JSON.stringify(response.token));
       setIsLoading(false);
-      return false;
+      return true;
     } catch (error) {
-      console.error('Login error:', error);
+      console.log('[AuthContext] Login error:', error);
       setIsLoading(false);
-      return false;
+      return error;
     }
   };
 
-  const register = async (name: string, email: string, password: string): Promise<boolean> => {
+  const register = async (firstName: string, lastName: string, email: string, password: string): Promise<true | string> => {
     setIsLoading(true);
     try {
-      const users = JSON.parse(localStorage.getItem('canvassing_users') || '[]');
+      const response = await api(`/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ firstName, lastName, email, password }),
+      });
       
-      // Check if user already exists
-      if (users.find((u: any) => u.email === email)) {
-        setIsLoading(false);
-        return false;
-      }
-
-      const newUser = {
-        id: Date.now().toString(),
-        name,
-        email,
-        password // In a real app, this would be hashed
-      };
-
-      users.push(newUser);
-      localStorage.setItem('canvassing_users', JSON.stringify(users));
-
-      const { password: _, ...userWithoutPassword } = newUser;
-      setUser(userWithoutPassword);
-      localStorage.setItem('canvassing_user', JSON.stringify(userWithoutPassword));
+      const { user } = response;
+        setUser(user);
+      localStorage.setItem('canvassing_token', JSON.stringify(response.token));
       setIsLoading(false);
       return true;
     } catch (error) {
       console.error('Registration error:', error);
       setIsLoading(false);
-      return false;
+      return error.message;
     }
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('canvassing_user');
+    localStorage.removeItem('canvassing_token');
   };
 
   return (

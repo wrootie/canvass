@@ -6,6 +6,7 @@ A modern web application for political and community canvassers to track convers
 ## Technology Stack
 
 - **Frontend**: React 18 with TypeScript
+- **Backend**: NodeJS JWT auth and with MYSQL
 - **UI Framework**: Tailwind CSS with shadcn/ui components
 - **Build Tool**: Vite
 - **State Management**: React Context API with custom hooks
@@ -21,38 +22,18 @@ A modern web application for political and community canvassers to track convers
 - Node.js (version 16 or higher)
 - npm or yarn package manager
 
-### Installation
+## Setup
 
-1. Clone the repository:
-```bash
-git clone https://github.com/wrootie/canvass
-cd canvass
-```
+Refer to the README.md pages within /app and /api for installation and setup.
 
-2. Install dependencies:
-```bash
-npm install
-```
+You will need to run the app and the api server in parallel.
 
-3. Start the development server:
-```bash
-npm run dev
-```
-
-4. Open your browser and navigate to `http://localhost:8080`
-
-### Building for Production
-
-```bash
-npm run build
-```
-
-The built files will be in the `dist` directory.
+The built files will be in the `dist` directory for each of these folders.
 
 ## Usage
 
 ### Getting Started
-1. **Register**: Create a new account with your name, email, and password
+1. **Register**: Create a new account with your first name, last name, email, and password
 2. **Login**: Sign in with your credentials
 3. **Add Records**: Use the main form to record conversations with contacts
 4. **View Records**: Navigate to the records page to see all your data
@@ -60,7 +41,7 @@ The built files will be in the `dist` directory.
 6. **Export**: Download your data as CSV for external analysis
 
 ### Data Management
-- **Add New Contacts**: Fill out the form with contact name, email, and conversation notes
+- **Add New Contacts**: Fill out the form with first name, last name, email, and conversation notes
 - **Edit Records**: Click the edit button on any record to modify information
 - **Delete Records**: Remove records you no longer need
 - **Search Functionality**: Search across all fields to quickly find information
@@ -101,9 +82,28 @@ src/
 - `PUT /records/:id` - Update existing record
 - `DELETE /records/:id` - Delete record
 
-### Production Deployment Steps
+### Production Deployment Steps / Getting this production ready
 // TODO
+- Add gating based on env variable (NODE_ENV='development' vs NODE_ENV='production')
+- Split out env variables for prod versus development (.env.production vs .env.development)
+- Deploy API to Heroku/Railway/Render
+- Production env variables (AKA JWT secrets etc) can be updated within something like AWS Secret manager or within Heroku.
+- Create a production MySQL setup (AWS RDS / Railway)
+
+### TODOs
+- Aggregate types between /app and api! Can be a standalone package
+^ We can use [Typedoc] (https://typedoc.org/) to make these types more available for quick browsing
+- Split out common utilities (AKA password validation or email validation into a standalone package)
+^ This would be beneficial for ensuring we validate information in the same way between the backend and front-end
+- Add a testing harness for /app (playwright or cypress)
+- Add React storybook within the app/src/components folder
+^ This can be deployed to a static website that gets re-deployed when this folder gets updated + split to a separate package
+- Add a testing harness for /api (mocha + jest)
+
+### Assumptions made
+- Tailwind CSS is a technology that would be easy to adopt! It certainly has a learning curve, but it increases velocity when it comes to building UI, adds consistency, decreases bundle size (Purges unused styles), responsive, etc. But it is more verbose than using a standalone CSS file with BEM naming.
+- Email is not a required field when gathering notes
+- People who we canvass won't eventually become users themselves
 
 ## License
-
 This project is licensed under the MIT License.

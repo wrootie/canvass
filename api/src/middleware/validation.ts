@@ -19,7 +19,13 @@ export const validateEmail = (email: string): boolean => {
  * @returns True if the password is valid, false otherwise
  */
 export const validatePassword = (password: string): boolean => {
-  return password.length >= 6;
+  // At least 8 characters
+  // At least one lowercase letter
+  // At least one uppercase letter
+  // At least one digit
+  // At least one special character (!@#$%^&*() and similar)
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;"'<>,.?/~`\\|=-]).{8,}$/;
+  return passwordRegex.test(password);
 };
 
 /**

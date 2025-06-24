@@ -1,9 +1,22 @@
 ## Setup for local dev
 
-0. Setup MYSQL
+0. Create `.env` file
 
-0. Ensure that MySQL is installed
-1. Ensure that root user is using password that you've specified within .env
+```
+PORT=3000
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=new_password
+DB_NAME=canvassing_app
+JWT_SECRET='zxcvbnm1234567890qwertyuiopasdfghjk'
+JWT_EXPIRES_IN='7D'
+```
+
+1. Setup MYSQL
+
+2. Ensure that MySQL is installed
+3. Ensure that root user is using password that you've specified within .env
 
 ```
 // Login to MYSQL
@@ -16,15 +29,15 @@ UPDATE mysql.user SET Password=PASSWORD({{ PW Name in .env }}) WHERE User='root'
 FLUSH PRIVILEGES;
 ```
 
-2. Ensure that the db has been created with the name specified within .env
+4. Ensure that the db has been created with the name specified within .env
 
 ```
 mysql> CREATE DATABASE {{DB Name in .env}};
 ```
 
 // Run the migration
-3. npm run migrate
-4. npm run dev
+5. npm run migrate
+6. npm run dev
 
 ## Deployment
 // TODO

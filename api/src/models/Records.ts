@@ -119,13 +119,29 @@ export class RecordModel {
 import { Request, Response, NextFunction } from 'express';
 import { LoginCredentials, RegisterCredentials } from '../types';
 
+/**
+ * Validate an email address
+ * @param email - The email address to validate
+ * @returns True if the email is valid, false otherwise
+ */
 export const validateEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
 
+/**
+ * Validate a password
+ * @param password - The password to validate
+ * @returns True if the password is valid, false otherwise
+ */
 export const validatePassword = (password: string): boolean => {
-  return password.length >= 6;
+  // At least 8 characters
+  // At least one lowercase letter
+  // At least one uppercase letter
+  // At least one digit
+  // At least one special character (!@#$%^&*() and similar)
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;"'<>,.?/~`\\|=-]).{8,}$/;
+  return passwordRegex.test(password);
 };
 
 export const validateLogin = (
@@ -165,7 +181,7 @@ export const validateRegister = (
   }
 
   if (!validatePassword(password)) {
-    res.status(400).json({ error: 'Password must be at least 6 characters' });
+    res.status(400).json({ error: 'Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one digit, and one special character' });
     return;
   }
 

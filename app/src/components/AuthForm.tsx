@@ -45,7 +45,7 @@ export const AuthForm: React.FC = () => {
     }
 
     if (!validatePassword(formData.password)) {
-      newErrors.password = 'Password must be at least 6 characters long';
+      newErrors.password = 'Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one digit, and one special character';
       isValid = false;
     }
 

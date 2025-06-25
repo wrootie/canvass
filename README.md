@@ -1,6 +1,5 @@
 
 # Canvassing App
-
 A modern web application for political and community canvassers to track conversations and manage contact information.
 
 ## Technology Stack
@@ -71,7 +70,7 @@ src/
 ### Data Flow
 1. User authentication is managed through AuthContext
 2. Canvassing records are managed through the useCanvassingRecords hook
-3. Data persistence uses localStorage (simulating a backend API) // TODO: Replace with actual API calls!
+3. Data persistence uses localStorage (simulating a backend API)
 4. All state changes trigger UI updates through React's state management
 
 ## API Endpoints
@@ -86,21 +85,32 @@ src/
 // TODO
 - Add gating based on env variable (NODE_ENV='development' vs NODE_ENV='production')
 - Split out env variables for prod versus development (.env.production vs .env.development)
-- Deploy API to Heroku/Railway/Render
+- Deploy API code to Heroku/Railway/Render
 - Production env variables (AKA JWT secrets etc) can be updated within something like AWS Secret manager or within Heroku.
 - Create a production MySQL setup (AWS RDS / Railway)
+
+
+### For expansion + sustainability (TODOs)
+- SSL certificates
+- CI/CD for automated deployments
+- Domain setup and DNS configuration
+- Logging and monitoring
+^ Console logs might be enough for now, but we can also use tools like [Winston](https://github.com/winstonjs/winston) or [Sentry](https://sentry.io/)
+- Add an on-call schedule
+- Create a runbook for rollbacks, deployments, QA, and how to monitor
 
 ### TODOs
 - Aggregate types between /app and api! Can be a standalone package
 ^ We can use [Typedoc] (https://typedoc.org/) to make these types more available for quick browsing
 - Split out common utilities (AKA password validation or email validation into a standalone package)
 ^ This would be beneficial for ensuring we validate information in the same way between the backend and front-end
-- Add a testing harness for /app (playwright or cypress)
+- Add a testing harness for /app (Playwright or Cypress)
 - Add React storybook within the app/src/components folder
 ^ This can be deployed to a static website that gets re-deployed when this folder gets updated + split to a separate package
 - Add a testing harness for /api (mocha + jest)
 
 ### Assumptions made
+- JWT auth is enough for authentication (i.e If this app were to be merged with an existing platform, this would need to get reworked.)
 - Tailwind CSS is a technology that would be easy to adopt! It certainly has a learning curve, but it increases velocity when it comes to building UI, adds consistency, decreases bundle size (Purges unused styles), responsive, etc. But it is more verbose than using a standalone CSS file with BEM naming.
 - Email is not a required field when gathering notes
 - People who we canvass won't eventually become users themselves

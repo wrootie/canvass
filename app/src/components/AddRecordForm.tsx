@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,19 +6,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCanvassingRecords } from '../hooks/useCanvassingRecords';
 import { validateEmail, validateName } from '../utils/validation';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/useToast';
 import { Save, UserPlus } from 'lucide-react';
-import { Form } from 'react-router-dom';
+import { Record } from '@/types';
 
 interface AddRecordFormProps {
-  editingRecord?: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email?: string;
-    notes: string;
-  };
-  onSuccess?: () => void;
+  editingRecord?: Record;
+  onSuccess?: () => Promise<void>;
 }
 
 export const AddRecordForm: React.FC<AddRecordFormProps> = ({ editingRecord, onSuccess }) => {
@@ -64,7 +57,8 @@ export const AddRecordForm: React.FC<AddRecordFormProps> = ({ editingRecord, onS
       isValid = false;
     }
 
-    if (!validateEmail(formData.email)) {
+    // Emails aren't required for adding a record
+    if (formData.email && !validateEmail(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
       isValid = false;
     }
@@ -85,16 +79,16 @@ export const AddRecordForm: React.FC<AddRecordFormProps> = ({ editingRecord, onS
     
     setIsSubmitting(true);
     console.log('Submitting form:', { editingRecord: !!editingRecord, formData });
-    console.log({ formData })
     try {
       let success = false;
       
       if (editingRecord) {
-        success = await updateRecord(editingRecord.id, formData.firstName, formData.lastName, formData.email, formData.notes);
-        console.log('Update result:', success);
+        success = await updateRecord({ ...editingRecord, ...formData });
+        console.log('[Add Record Form]: Successfully updated record')
       } else {
-        success = await addRecord(formData.firstName, formData.lastName, formData.email, formData.notes);
-        console.log('Add result:', success);
+        success = await addRecord(formData);
+        console.log('[Add Record Form]: Successfully added record')
+
       }
 
       if (success) {
@@ -106,7 +100,7 @@ export const AddRecordForm: React.FC<AddRecordFormProps> = ({ editingRecord, onS
         if (!editingRecord) {
           setFormData({ firstName: '', lastName: '', email: '', notes: '' });
         }
-        onSuccess?.();
+        await onSuccess?.();
       } else {
         toast({
           title: "Error",
@@ -175,7 +169,7 @@ export const AddRecordForm: React.FC<AddRecordFormProps> = ({ editingRecord, onS
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="email">Email Address *</Label>
+              <Label htmlFor="email">Email Address</Label>
               <Input
                 id="email"
                 type="email"

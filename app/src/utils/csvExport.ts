@@ -1,8 +1,7 @@
-
-import { CanvassingRecord } from '../types';
+import { Record } from '@/types';
 
 // TODO: Test this
-export const exportToCSV = (records: CanvassingRecord[], filename: string = 'canvassing-records.csv') => {
+export const exportToCSV = (records: Record[], filename: string = 'canvassing-records.csv') => {
   const headers = ['First Name', 'Last Name', 'Email', 'Notes', 'Created Date', 'Last Updated'];
   
   const csvContent = [

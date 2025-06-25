@@ -3,8 +3,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { AuthProvider } from "@/providers/AuthProvider";
+import { useAuth } from "./hooks/useAuth";
 import { AuthForm } from "./components/AuthForm";
 import AddRecord from "./pages/AddRecord";
 import Records from "./pages/Records";
@@ -13,7 +14,7 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  const { user, isLoading } = useAuth();
+  const { token, isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -23,7 +24,7 @@ const AppContent = () => {
     );
   }
 
-  if (!user) {
+  if (!token) {
     return <AuthForm />;
   }
 

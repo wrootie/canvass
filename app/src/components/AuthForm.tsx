@@ -1,12 +1,11 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { validateEmail, validateName, validatePassword } from '../utils/validation';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/useToast';
 
 export const AuthForm: React.FC = () => {
   const { login, register, isLoading } = useAuth();
@@ -69,7 +68,7 @@ export const AuthForm: React.FC = () => {
           });
         }
       } else {
-        const result = await register(formData.firstName, formData.lastName, formData.email, formData.password);
+        const result = await register({ firstName: formData.firstName, lastName: formData.lastName, email: formData.email, password: formData.password });
         if (result !== true) {
           toast({
             title: "Registration Failed",
@@ -110,9 +109,9 @@ export const AuthForm: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLoginMode && (
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="firstName">First Name</Label>
                 <Input
-                  id="name"
+                  id="firstName"
                   type="text"
                   placeholder="Enter your first name"
                   value={formData.firstName}
@@ -124,9 +123,9 @@ export const AuthForm: React.FC = () => {
             )}
             {!isLoginMode && (
               <div className="space-y-2">
-                <Label htmlFor="name">Last Name</Label>
+                <Label htmlFor="lastName">Last Name</Label>
                 <Input
-                  id="name"
+                  id="lastName"
                   type="text"
                   placeholder="Enter your last name"
                   value={formData.lastName}

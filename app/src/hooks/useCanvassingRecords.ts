@@ -1,12 +1,12 @@
 
 import { useState, useEffect } from 'react';
-import { CanvassingRecord } from '../types';
-import { useAuth } from '../contexts/AuthContext';
+import { Record } from '@/types';
+import { useAuth } from '@/hooks/useAuth';
 import { api } from '@/utils/wrappers';
 
 export const useCanvassingRecords = () => {
-  const { user } = useAuth();
-  const [records, setRecords] = useState<CanvassingRecord[]>([]);
+  const { user, token } = useAuth();
+  const [records, setRecords] = useState<Record[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadRecords = async() => {
@@ -32,32 +32,22 @@ export const useCanvassingRecords = () => {
   };
 
   useEffect(() => {
-    loadRecords();
+   (async function() { loadRecords() })();
   }, [user]);
 
-  const addRecord = async(firstName: string, lastName: string, email: string, notes: string): Promise<boolean> => {
+  const addRecord = async(record: Omit<Record, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<boolean> => {
     if (!user) return false;
 
     try {
       // Will throw an error if the record is not created
-      await api(`/records`, {
+      const newRecord = await api(`/records`, {
         method: 'POST',
-        body: JSON.stringify({ firstName, lastName, email, notes }),
+        body: JSON.stringify(record),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('canvassing_token')}`
         }
       });
-      const newRecord: CanvassingRecord = {
-        id: Date.now().toString(),
-        firstName,
-        lastName,
-        email,
-        notes,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        userId: user.id
-      };
       setRecords(prev => [...prev, newRecord]);
       return true;
     } catch (error) {
@@ -66,20 +56,20 @@ export const useCanvassingRecords = () => {
     }
   };
 
-  const updateRecord = async(id: string, firstName: string, lastName: string, email: string, notes: string): Promise<boolean> => {
+  const updateRecord = async(record: Record): Promise<boolean> => {
     if (!user) return false;
-
+    console.log('[useCanvassingRecord] Updating Record');
     try {
       // Will throw an error if the record is not found
-      await api(`/records/${id}`, {
+      await api(`/records/${record.id}`, {
         method: 'PUT',
-        body: JSON.stringify({ firstName, lastName, email, notes }),
+        body: JSON.stringify(record),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('canvassing_token')}`
         }
       });
-      loadRecords();
+      await loadRecords();
       return true;
     } catch (error) {
       console.error('Error updating record:', error);
@@ -87,9 +77,9 @@ export const useCanvassingRecords = () => {
     }
   };
 
-  const deleteRecord = async(id: string): Promise<boolean> => {
+  const deleteRecord = async(id: number): Promise<boolean> => {
     if (!user) return false;
-
+    console.log('[useCanvassingRecord] Deleting record');
     try {
       // Will throw an error if the record is not found
       await api(`/records/${id}`, {
@@ -99,7 +89,7 @@ export const useCanvassingRecords = () => {
           'Authorization': `Bearer ${localStorage.getItem('canvassing_token')}`
         }
       });
-      setRecords(prev => prev.filter(r => r.id !== id));
+      setRecords(prev => prev.filter(r => r.id !== Number(id)));
       return true;
     } catch (error) {
       console.error('Error deleting record:', error);

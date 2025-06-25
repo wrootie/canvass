@@ -1,14 +1,14 @@
 import { Request } from 'express';
 
-// TODO: Merge with frontend types
+// TODO: Merge with frontend types in a shared package
 export interface User {
   id: number;
   firstName: string;
   lastName: string;
   email: string;
   password: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string; // ISO string
+  updatedAt: string; // ISO string
 }
 
 export interface Record {
@@ -16,10 +16,10 @@ export interface Record {
   userId: number;
   firstName: string;
   lastName: string;
-  email: string;
+  email?: string;
   notes: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string; // ISO string
+  updatedAt: string; // ISO string
 }
 
 export interface AuthRequest extends Request {

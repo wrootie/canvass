@@ -31,12 +31,13 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     // Generate token
     const token = generateToken(user.id);
-
     res.status(201).json({
       message: 'User registered successfully',
       token,
       user: {
         id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         createdAt: user.createdAt
       }
@@ -80,6 +81,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       token,
       user: {
         id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         createdAt: user.createdAt
       }

@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,20 +5,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { useCanvassingRecords } from '../hooks/useCanvassingRecords';
 import { exportToCSV } from '../utils/csvExport';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/useToast';
 import { Search, Download, Edit, Trash2, Calendar, Mail } from 'lucide-react';
 import { AddRecordForm } from './AddRecordForm';
-import { CanvassingRecord } from '../types';
+import { Record } from '@/types';
 
 export const RecordsList: React.FC = () => {
-  const { records, isLoading, deleteRecord } = useCanvassingRecords();
+  const { records, isLoading, deleteRecord, refreshRecords } = useCanvassingRecords();
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
-  const [editingRecord, setEditingRecord] = useState<CanvassingRecord | null>(null);
-
+  const [editingRecord, setEditingRecord] = useState<Record | null>(null);
+  const stringifiedRecords = JSON.stringify(records);
+  // Filtered records based on search term - return whole list if there is no search query
   const filteredRecords = useMemo(() => {
     if (!searchTerm) return records;
-    
     const term = searchTerm.toLowerCase();
     return records.filter(record =>
       record.firstName.toLowerCase().includes(term) ||
@@ -27,7 +26,8 @@ export const RecordsList: React.FC = () => {
       record.email.toLowerCase().includes(term) ||
       record.notes.toLowerCase().includes(term)
     );
-  }, [records, searchTerm]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stringifiedRecords, records, searchTerm]);
 
   const handleExportCSV = () => {
     if (filteredRecords.length === 0) {
@@ -46,7 +46,7 @@ export const RecordsList: React.FC = () => {
     });
   };
 
-  const handleDelete = (id: string, name: string) => {
+  const handleDelete = (id: number, name: string) => {
     if (window.confirm(`Are you sure you want to delete the record for ${name}?`)) {
       const success = deleteRecord(id);
       if (success) {
@@ -64,18 +64,20 @@ export const RecordsList: React.FC = () => {
     }
   };
 
-  const handleEdit = (record: CanvassingRecord) => {
+  const handleEdit = (record: Record) => {
     setEditingRecord(record);
   };
 
-  const handleEditSuccess = () => {
+  const handleEditSuccess = async() => {
     setEditingRecord(null);
+    await refreshRecords();
     toast({
       title: "Success",
       description: "Record updated successfully"
     });
   };
 
+  // If in edit mode, show the form
   if (editingRecord) {
     return (
       <div>
@@ -86,7 +88,8 @@ export const RecordsList: React.FC = () => {
       </div>
     );
   }
-
+  
+  // Loading state
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">

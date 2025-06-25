@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { LoginCredentials, RegisterCredentials, CreateRecordData, UpdateRecordData } from '../types';
+import { LoginCredentials, CreateRecordData, UpdateRecordData } from '../types';
 
-//TODO: TEST! Beef up password validation!
-
+// TODO: TEST! Beef up password validation!
+// TODO: Move into shared utilities package
 /**
  * Validate an email address
  * @param email - The email address to validate

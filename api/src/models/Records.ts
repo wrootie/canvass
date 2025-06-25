@@ -3,7 +3,6 @@ import { Record, UpdateRecordData } from '../types/index.js';
 import { RowDataPacket } from 'mysql2';
 
 //TODO: TEST!
-
 /**
  * Record model
  * @class RecordModel
@@ -116,74 +115,3 @@ export class RecordModel {
     }
   }
 }
-import { Request, Response, NextFunction } from 'express';
-import { LoginCredentials, RegisterCredentials } from '../types';
-
-/**
- * Validate an email address
- * @param email - The email address to validate
- * @returns True if the email is valid, false otherwise
- */
-export const validateEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
-/**
- * Validate a password
- * @param password - The password to validate
- * @returns True if the password is valid, false otherwise
- */
-export const validatePassword = (password: string): boolean => {
-  // At least 8 characters
-  // At least one lowercase letter
-  // At least one uppercase letter
-  // At least one digit
-  // At least one special character (!@#$%^&*() and similar)
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;"'<>,.?/~`\\|=-]).{8,}$/;
-  return passwordRegex.test(password);
-};
-
-export const validateLogin = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
-  const { email, password }: LoginCredentials = req.body;
-
-  if (!email || !password) {
-    res.status(400).json({ error: 'Email and password are required' });
-    return;
-  }
-
-  if (!validateEmail(email)) {
-    res.status(400).json({ error: 'Invalid email format' });
-    return;
-  }
-
-  next();
-};
-
-export const validateRegister = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
-  const { email, password }: RegisterCredentials = req.body;
-  if (!email || !password) {
-    res.status(400).json({ error: 'All fields are required' });
-    return;
-  }
-
-  if (!validateEmail(email)) {
-    res.status(400).json({ error: 'Invalid email format' });
-    return;
-  }
-
-  if (!validatePassword(password)) {
-    res.status(400).json({ error: 'Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one digit, and one special character' });
-    return;
-  }
-
-  next();
-};

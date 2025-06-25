@@ -1,4 +1,5 @@
-// TODO: Merge with backend types in a shared package
+// Shared types for the frontend and backend
+
 export interface User {
   id: number;
   firstName: string;

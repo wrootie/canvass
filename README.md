@@ -115,5 +115,16 @@ src/
 - Email is not a required field when gathering notes
 - People who we canvass won't eventually become users themselves
 
+### What it looks like
+<img width="1032" alt="Image" src="https://github.com/user-attachments/assets/fc83c3b8-627e-4fe6-b2d9-6e56f0e45844" />
+<img width="1043" alt="Image" src="https://github.com/user-attachments/assets/8d7267d5-d7f3-4ccd-8094-304edcbac1c6" />
+<img width="1124" alt="Image" src="https://github.com/user-attachments/assets/7e9b9cbe-87ad-4a1f-a8bf-abe725540dd0" />
+<img width="1228" alt="Image" src="https://github.com/user-attachments/assets/66d2d24a-9e12-42be-a208-f0632020832c" />
+<img width="1096" alt="Image" src="https://github.com/user-attachments/assets/c4f1e231-937b-4b4f-a89d-8253ef3464b0" />
+<img width="684" alt="Image" src="https://github.com/user-attachments/assets/8708a161-35d1-4cce-8e2f-7f392493a4a3" />
+<img width="419" alt="Image" src="https://github.com/user-attachments/assets/7320eb8f-bf2d-41c1-aa8f-e922d444c96e" />
+<img width="408" alt="Image" src="https://github.com/user-attachments/assets/5a7a1b1c-d99d-430e-a99c-391791865283" />
+<img width="1061" alt="Image" src="https://github.com/user-attachments/assets/96fd6c57-ddb0-4988-8a28-31cc1556dcb5" />
+
 ## License
 This project is licensed under the MIT License.

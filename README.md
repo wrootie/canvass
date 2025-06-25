@@ -100,6 +100,7 @@ src/
 - Create a runbook for rollbacks, deployments, QA, and how to monitor
 
 ### TODOs
+- Re-think the type of id used for user ids and record ids. [Nanoid](https://www.npmjs.com/package/nanoid)s would be a nice way to keep them unique but succinct.
 - Aggregate types between /app and api! Can be a standalone package
 ^ We can use [Typedoc] (https://typedoc.org/) to make these types more available for quick browsing
 - Split out common utilities (AKA password validation or email validation into a standalone package)
